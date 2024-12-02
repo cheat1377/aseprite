@@ -1,65 +1,125 @@
-name:%C2%A0build
+name:%20build
 
-on:%C2%A0[push,%C2%A0pull_request]
+on:%20[push,%20pull_request]
 
 jobs:
 
-%C2%A0build:
+%20build:
 
-%C2%A0%C2%A0runs-on:%C2%A0${{%C2%A0matrix.os }}
+%20%20runs-on:%20${{%20matrix.os%20}}
 
-%C2%A0%C2%A0strategy:
+%20%20strategy:
 
-%C2%A0%C2%A0%C2%A0fail-fast:%C2%A0false
+%20%20%20fail-fast:%20false
 
-%C2%A0%C2%A0%C2%A0matrix:
+%20%20%20matrix:
 
-%C2%A0%C2%A0%C2%A0%C2%A0os:%C2%A0[windows-latest]
+%20%20%20%20os:%20[windows-latest]
 
-%C2%A0%C2%A0%C2%A0%C2%A0build_type:%C2%A0[Release]
+%20%20%20%20build_type:%20[Release]
 
-%C2%A0%C2%A0%C2%A0%C2%A0enable_ui:%C2%A0[on]
+%20%20%20%20enable_ui:%20[on]
 
-%C2%A0%C2%A0%C2%A0%C2%A0include:
+%20%20%20%20include:
 
-%C2%A0%C2%A0%C2%A0%C2%A0%C2%A0-%C2%A0os:%C2%A0windows-latest
+%20%20%20%20%20-%20os:%20windows-latest
 
-%C2%A0%C2%A0%C2%A0%C2%A0%C2%A0%C2%A0build_type:%C2%A0Release
+%20%20%20%20%20%20build_type:%20Release
 
-%C2%A0%C2%A0%C2%A0%C2%A0%C2%A0%C2%A0enable_ui:%C2%A0on
+%20%20%20%20%20%20enable_ui:%20on
 
-%C2%A0%C2%A0steps:
+%20%20steps:
 
-%C2%A0%C2%A0-%C2%A0uses:%C2%A0actions/checkout@v3
+%20%20-%20uses:%20actions/checkout@v3
 
-%C2%A0%C2%A0%C2%A0with:
+%20%20%20with:
 
-%C2%A0%C2%A0%C2%A0%C2%A0submodules:%C2%A0'&#39;recursive&#39;'
+%20%20%20%20submodules:%20'&#39;recursive&#39;'
 
-%C2%A0%C2%A0-%C2%A0name:%C2%A0ccache
+%20%20-%20name:%20ccache
 
-%C2%A0%C2%A0%C2%A0uses:%C2%A0hendrikmuhs/ccache-action@v1
+%20%20%20uses:%20hendrikmuhs/ccache-action@v1
 
-%C2%A0%C2%A0%C2%A0if:%C2%A0runner.os%C2%A0==%C2%A0'Linux'
+%20%20%20if:%20runner.os%20==%20'Linux'
 
-%C2%A0%C2%A0%C2%A0with:
+%20%20%20with:
 
-%C2%A0%C2%A0%C2%A0%C2%A0key:%C2%A0${{%C2%A0matrix.os }}-${{%C2%A0matrix.enable_ui }}
+%20%20%20%20key:%20${{%20matrix.os%20}}-${{%20matrix.enable_ui%20}}
 
-%C2%A0%C2%A0-%C2%A0uses:%C2%A0seanmiddleditch/gha-setup-ninja@master
+%20%20-%20uses:%20seanmiddleditch/gha-setup-ninja@master
 
-%C2%A0%C2%A0-%C2%A0uses:%C2%A0ilammy/msvc-dev-cmd@v1
+%20%20-%20uses:%20ilammy/msvc-dev-cmd@v1
 
-%C2%A0%C2%A0%C2%A0if:%C2%A0runner.os%C2%A0==%C2%A0'Windows'
+%20%20%20if:%20runner.os%20==%20'Windows'
 
-%C2%A0%C2%A0-%C2%A0name:%C2%A0Install%20Dependencies
+%20%20-%20name:%20Install%20Dependencies
 
-%C2%A0%C2%A0%C2%A0shell:%C2%A0bash
+%20%20%20shell:%20bash
 
-%C2%A0%C2%A0%C2%A0run:%C2%A0|
+%20%20%20run:%20|
 
-%C2%A0%C2%A0%C2%A0%C2%A0if%20[[%C2%A0"${{%C2%A0runner.os }}"%C2%A0==%C2%A0"Linux" ]]%20;%20then
+%20%20%20%20if%20[[%20"${{%20runner.os%20}}"%20==%20"Linux"%20]]%20;%20then
 
-%C2%A0%C2%A0%C2%A0%C2%A0%C2%A0sudo%20apt-get%20update%20-qq
+%20%20%20%20%20sudo%20apt-get%20update%20-qq
 
-%C2%A0%C2%A0%C2%A0%C2%A0%C
+%20%20%20%20%20sudo%20apt-get%20install%20-y%20\
+
+%20%20%20%20%20%20libx11-dev%20libxcursor-dev%20libxi-dev
+
+%20%20%20fi
+
+%20%20-%20name:%20Generating%20Makefiles
+
+%20%20%20shell:%20bash
+
+%20%20%20run:%20|
+
+%20%20%20%20if%20[[%20"${{%20runner.os%20}}"%20==%20"Windows"%20]]%20;%20then
+
+%20%20%20%20%20export%20enable_ccache=off
+
+%20%20%20%20else
+
+%20%20%20%20%20export%20enable_ccache=on
+
+%20%20%20%20fi
+
+%20%20%20curl%20-L%20https://github.com/blueloveTH/aseprite/releases/download/v0.01/skia.zip%20--output%20skia.zip
+
+%20%20%20%207z%20x%20skia.zip
+
+%20%20%20cmake%20-S%20.%20-B%20build%20-G%20Ninja%20\
+
+%20%20%20%20-DCMAKE_BUILD_TYPE=${{%20matrix.build_type%20}}%20\
+
+%20%20%20%20-DENABLE_UI=${{%20matrix.enable_ui%20}}%20\
+
+%20%20%20%20-DENABLE_CCACHE=$enable_ccache%20\
+
+%20%20%20%20-DLAF_BACKEND=skia%20\
+
+%20%20%20%20-DSKIA_DIR=./skia%20\
+
+%20%20%20%20-DSKIA_LIBRARY_DIR=./skia/out/Release-x64%20\
+
+%20%20%20%20-DSKIA_LIBRARY=./skia/out/Release-x64/skia.lib
+
+%20%20-%20name:%20Compiling
+
+%20%20%20shell:%20bash
+
+%20%20%20run:%20|
+
+%20%20%20%20cd%20build%20&&%20ninja
+
+%20%20-%20uses:%20actions/upload-artifact@v3
+
+%20%20%20with:
+
+%20%20%20%20name:%20aseprite
+
+%20%20%20%20path:%20|
+
+%20%20%20%20%20D:/a/aseprite/aseprite/build/bin/data
+
+%20%20%20%20%20D:/a/aseprite/aseprite/build/bin/aseprite.exe
